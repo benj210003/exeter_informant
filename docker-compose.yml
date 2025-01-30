@@ -1,12 +1,27 @@
-version: "3.9"
-
 services:
-  app:
-    build: .
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     environment:
-      - DB_PATH=/app/server/database.db
+      - DB_PATH=/app/backend/server/database.db
     restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app  # Map local frontend directory to container's /app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
+      - WATCHPACK_POLLING=true  # Add this to improve file watching
+
