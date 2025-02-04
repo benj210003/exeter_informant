@@ -1,15 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
-import axios from 'axios'
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {getStories, putStory} from "./api.js"
+import StoryBoard from "./StoryBoard.js";
+import StoryInput from "./StoryInput.js";
 
-// const {data} = await axios.get('http://localhost:8000/');
-// console.log(data)
-
+async function addStory (title, story) {
+  await putStory(title, story);
+}
 
 function App() {
+
+  const [stories, setStories] = useState(null);
+
+  useEffect(() => {
+    async function fetchStories () {
+      const fetchedStories = await getStories();
+      setStories(fetchedStories);
+    }
+    fetchStories();
+  }, [])
+
   return(
-    <h1>Exeter Informant</h1>
+    <><h1>Exeter Informant</h1>
+    <StoryInput></StoryInput>
+    <h1>{stories !== null ? <StoryBoard stories={stories}/> : "No Stories available"}</h1></>
   )
 }
 
